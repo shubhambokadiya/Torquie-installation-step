@@ -1,0 +1,52 @@
+MASTER&NODE:
+
+
+
+firewalld disable
+selinux disabled                       /etc/selinux/config
+ssh ............................PASSWORDLESS SSH ON THE NODE
+yum groupinstall "Development Tools" -y
+yum install libxml2 libxml2-devel boost boost-devel openssl-devel libtool -y
+tar -xvf torque-6.1.0.tar.gz
+
+
+MASTER ;
+
+
+cd torque-6.1.0                    // GO INTO TORQUE DIRECTORY
+
+./configure --prefix=/opt/PBS/ --with-server-home=/opt/PBS/ --with-default-server=$HOSTNAME
+  make
+  make install
+  ls
+  cp contrib/systemd/pbs_server.service /usr/lib/systemd/system/.
+  ./torque.setup root
+  ps -aef | grep pbs
+  qmgr -c 'p s' |less
+  qterm -t quick
+  systemctl start pbs_server
+  systemctl status pbs_server
+  qstat -q
+  vi /opt/PBS/server_priv/nodes      // (1) THIS FILE SHOULD NOT EXIST THERE IT SHOULD ME CREATED.
+                                        (2) ADD THE HOSTNAME OF MASTER AND NODE
+
+  systemctl restart pbs_server
+  systemctl restart pbs_mom
+  pbs-sched
+  pbs_sched
+  qstat
+  pbsnodes -a
+  qstat
+-----------------------------------------------------------------------------------------------------------------
+task-2 submit the job using the user login
+
+
+alt+f2 on master  user login $
+qsub -l nodes=1 -I      //// this command is use to submit the job// you can  change the number of nodes//
+alt+f1 on master root user # 
+qstat   // check the job is submitted or not 
+
+
+--- if it shows 'c'  it means  your job is complete  
+--- if it show  'r' it means your job is in reserved state
+----if it show   'q' it means your job is in que state
